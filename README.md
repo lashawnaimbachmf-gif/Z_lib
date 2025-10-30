@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/23224357/README.md)
 # 温馨提示卡片 (Warm Tips Cards)
 
 这是一个自动生成温馨提醒卡片的网页应用，具有以下特点：

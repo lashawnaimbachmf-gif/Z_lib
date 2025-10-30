@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>温馨提示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: '微软雅黑', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .controls {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            margin: 10px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn.pause {
+            background: linear-gradient(45deg, #ff9800, #f57c00);
+        }
+        
+        .btn.resume {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+        }
+        
+        .tip-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        .tip {
+            position: absolute;
+            padding: 15px 20px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            animation: fadeIn 0.5s ease-out, float 3s ease-in-out infinite;
+            pointer-events: auto;
+            min-width: 200px;
+            max-width: 80%;
+            word-wrap: break-word;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        .tip-close {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4d4d;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .counter {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .instructions h2 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            color: #555;
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .tip {
+                font-size: 1rem;
+                padding: 12px 15px;
+                min-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>温馨提示</h1>
+        <p>温馨提示卡片正在自动生成中...</p>
+    </div>
+    
+    <div class="controls">
+        <button class="btn pause" id="toggleBtn" onclick="toggleGeneration()">暂停生成</button>
+        <button class="btn" onclick="clearTips()" style="background: linear-gradient(45deg, #f44336, #d32f2f);">清除所有提示</button>
+    </div>
+    
+    <div class="counter">
+        当前提示数量: <span id="tipCount">0</span>
+    </div>
+    
+    <div class="instructions">
+        <h2>使用说明</h2>
+        <ul>
+            <li>页面打开后会自动开始生成温馨提示卡片</li>
+            <li>每个提示卡片都有随机颜色和位置</li>
+            <li>点击卡片右上角的 × 可以单独关闭某个提示</li>
+            <li>点击"暂停生成"可以暂停卡片的自动生成</li>
+            <li>点击"清除所有提示"可以一次性清除所有提示</li>
+            <li>提示卡片会轻微浮动，增加视觉效果</li>
+        </ul>
+    </div>
+    
+    <div class="tip-container" id="tipContainer"></div>
+
+    <script>
+        // 温馨提示语列表
+        const tips = [
+            '多喝水哦~', '保持微笑呀', '每天都要元气满满',
+            '记得吃水果', '保持好心情', '好好爱自己', '小宝儿我想你了',
+            '梦想成真', '期待下一次见面', '好好吃饭',
+            '顺顺利利', '早点休息', '愿所有烦恼都消失',
+            '别熬夜', '今天过得开心嘛', '天冷了，多穿衣服',
+            '生活很美好，值得我们去热爱', '你是最棒的！', '一切都会好起来的',
+            '相信自己，你可以做到的', '今天的你也很努力呢', '放松一下，给自己一个拥抱'
+        ];
+        
+        // 背景颜色列表
+        const bgColors = [
+            'rgba(255, 182, 193, 0.9)',   // 浅粉色
+            'rgba(135, 206, 250, 0.9)',   // 天蓝色
+            'rgba(144, 238, 144, 0.9)',   // 浅绿色
+            'rgba(230, 230, 250, 0.9)',   // 薰衣草色
+            'rgba(255, 255, 224, 0.9)',   // 浅黄色
+            'rgba(221, 160, 221, 0.9)',   // 梅花色
+            'rgba(255, 127, 80, 0.9)',    // 珊瑚色
+            'rgba(255, 228, 196, 0.9)',   // 鹿皮色
+            'rgba(127, 255, 212, 0.9)',   // 碧绿色
+            'rgba(255, 228, 225, 0.9)',   // 薄雾玫瑰色
+            'rgba(240, 255, 240, 0.9)',   // 蜜瓜色
+            'rgba(255, 240, 245, 0.9)',   // 薰衣草花色
+            'rgba(253, 245, 230, 0.9)'    // 老花色
+        ];
+        
+        let tipCount = 0;
+        let generationInterval;
+        let isGenerating = true;
+        
+        // 更新提示计数器
+        function updateTipCount() {
+            document.getElementById('tipCount').textContent = tipCount;
+        }
+        
+        // 切换生成状态
+        function toggleGeneration() {
+            const toggleBtn = document.getElementById('toggleBtn');
+            
+            if (isGenerating) {
+                // 暂停生成
+                clearInterval(generationInterval);
+                isGenerating = false;
+                toggleBtn.textContent = '继续生成';
+                toggleBtn.classList.remove('pause');
+                toggleBtn.classList.add('resume');
+                document.querySelector('.header p').textContent = '温馨提示卡片已暂停生成';
+            } else {
+                // 继续生成
+                startAutoGeneration();
+                isGenerating = true;
+                toggleBtn.textContent = '暂停生成';
+                toggleBtn.classList.remove('resume');
+                toggleBtn.classList.add('pause');
+                document.querySelector('.header p').textContent = '温馨提示卡片正在自动生成中...';
+            }
+        }
+        
+        // 开始自动生成
+        function startAutoGeneration() {
+            // 立即创建一个提示
+            createTip();
+            
+            // 每隔一段时间创建新的提示
+            generationInterval = setInterval(function() {
+                // 每次创建1-3个提示，增加变化
+                const count = Math.floor(Math.random() * 3) + 1;
+                for (let i = 0; i < count; i++) {
+                    createTip();
+                }
+            }, 800); // 每800毫秒生成一次
+        }
+        
+        // 创建单个提示
+        function createTip() {
+            const tipContainer = document.getElementById('tipContainer');
+            
+            // 创建提示元素
+            const tipElement = document.createElement('div');
+            tipElement.className = 'tip';
+            
+            // 随机选择提示语
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            tipElement.textContent = randomTip;
+            
+            // 随机选择背景颜色
+            const randomColor = bgColors[Math.floor(Math.random() * bgColors.length)];
+            tipElement.style.background = randomColor;
+            
+            // 随机位置（确保在可视区域内）
+            const maxX = window.innerWidth - 250;
+            const maxY = window.innerHeight - 150;
+            const randomX = Math.max(20, Math.min(maxX, Math.random() * maxX));
+            const randomY = Math.max(20, Math.min(maxY, Math.random() * maxY));
+            
+            tipElement.style.left = randomX + 'px';
+            tipElement.style.top = randomY + 'px';
+            
+            // 添加关闭按钮
+            const closeBtn = document.createElement('div');
+            closeBtn.className = 'tip-close';
+            closeBtn.innerHTML = '&times;';
+            closeBtn.onclick = function(e) {
+                e.stopPropagation();
+                tipElement.remove();
+                tipCount--;
+                updateTipCount();
+            };
+            
+            tipElement.appendChild(closeBtn);
+            
+            // 点击提示也可以关闭
+            tipElement.onclick = function(e) {
+                if (e.target !== closeBtn) {
+                    tipElement.remove();
+                    tipCount--;
+                    updateTipCount();
+                }
+            };
+            
+            // 添加到容器
+            tipContainer.appendChild(tipElement);
+            
+            // 更新计数
+            tipCount++;
+            updateTipCount();
+        }
+        
+        // 清除所有提示
+        function clearTips() {
+            const tipContainer = document.getElementById('tipContainer');
+            tipContainer.innerHTML = '';
+            tipCount = 0;
+            updateTipCount();
+        }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTipCount();
+            // 页面加载后立即开始自动生成
+            startAutoGeneration();
+        });
+    </script>
+</body>
+</html>
