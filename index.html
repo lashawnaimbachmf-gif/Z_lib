@@ -52,26 +52,25 @@
         }
         
         .controls {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 999;
         }
         
         .btn {
             background: linear-gradient(45deg, #4CAF50, #45a049);
             color: white;
             border: none;
-            padding: 15px 25px;
-            font-size: 1.1rem;
-            border-radius: 50px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            border-radius: 20px;
             cursor: pointer;
-            width: 100%;
-            margin: 10px 0;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transition: all 0.3s ease;
+            min-width: auto;
         }
         
         .btn:hover {
@@ -217,28 +216,16 @@
         <p>温馨提示卡片正在自动生成中...</p>
     </div>
     
-    <div class="controls">
-        <button class="btn pause" id="toggleBtn" onclick="toggleGeneration()">暂停生成</button>
-        <button class="btn" onclick="clearTips()" style="background: linear-gradient(45deg, #f44336, #d32f2f);">清除所有提示</button>
-    </div>
-    
     <div class="counter">
         当前提示数量: <span id="tipCount">0</span>
     </div>
     
-    <div class="instructions">
-        <h2>使用说明</h2>
-        <ul>
-            <li>页面打开后会自动开始生成温馨提示卡片</li>
-            <li>每个提示卡片都有随机颜色和位置</li>
-            <li>点击卡片右上角的 × 可以单独关闭某个提示</li>
-            <li>点击"暂停生成"可以暂停卡片的自动生成</li>
-            <li>点击"清除所有提示"可以一次性清除所有提示</li>
-            <li>提示卡片会轻微浮动，增加视觉效果</li>
-        </ul>
-    </div>
-    
     <div class="tip-container" id="tipContainer"></div>
+    
+    <div class="controls">
+        <button class="btn pause" id="toggleBtn" onclick="toggleGeneration()">暂停生成</button>
+        <button class="btn" onclick="clearTips()" style="background: linear-gradient(45deg, #f44336, #d32f2f);">清除所有</button>
+    </div>
 
     <script>
         // 温馨提示语列表
